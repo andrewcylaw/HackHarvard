@@ -67,7 +67,7 @@ function displayNearRoutePlaces(tmpRoute) {
   // for every 70 points, request to find all places to visit within 500 range given location
   var p1 = pathPoints[0];
   var p2;
-  for (var i =0; i < pathPoints.length; i++) {
+  for (var i = 1; i < pathPoints.length; i++) {
     p2 = pathPoints[i];
     if (calcDistance(p1, p2) > 0.7) {
       var xy = pathPoints[i];
@@ -145,6 +145,7 @@ function createMarker(place) {
 
   marker.addListener('mouseover', function() {
     infowindow.setContent(this.title);
+    infowindow.setContent(this.title + "\n Address:"+ place.vicinity + "\n Rating:" + place.rating);
     infowindow.open(map, this);
   });
 
