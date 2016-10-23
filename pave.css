@@ -24,6 +24,8 @@ header {
 	text-align: center;
 	font-size: 200%;
 
+	opacity: 0.8;
+
 }
 
 a {
@@ -37,6 +39,22 @@ a {
 	z-index: 1008;
 	padding-left: 8px;
 	padding-top: 8px;
+}
+
+#openHelpNav {
+	position: fixed;
+	z-index: 1500;
+	right: 0px;
+	padding-right: 8px;
+	padding-top: 8px;
+}
+
+#closeHelpNav {
+	position: fixed;
+	z-index: 1500;
+	right: 50%;
+	height: 320px;
+	transition: 0.5s;
 }
 
 ::-webkit-scrollbar {
@@ -61,7 +79,22 @@ a {
     background-color: #3a3a3a;
     overflow-x: hidden; 
     padding-top: 60px;
-    transition: 0.3s;
+    transition: 0.5s;
+}
+
+.helpDropDown {
+	height: 240px;
+	width: 100%;
+	position: fixed;
+	z-index: 1020;
+	top: 20%;
+	right: 0px;
+	left:0px;
+	background-color: #3a3a3a;
+    overflow-x: hidden; 
+    padding-top: 30px;
+    opacity: 0.8;
+    transition: 0.5s;
 }
 
 /* X for sidenav */
@@ -78,13 +111,23 @@ a {
 /* Sidenav elements */
 .downArrow {
 	display:block;
-	margin: 10px auto;
+	margin: 5px auto;
 }
 
-p {
+.wayPointcl{
+	vertical-align: middle;
+	display: inline-block;
+}
+
+#addLoc, p {
+	text-align: center;
+	font-weight: 400;
+	color: white;
 	display:block;
-	margin-left:10px auto;
-	margin-right:10px auto;
+	margin-left:2px auto;
+	margin-right:2px auto;
+	margin-top: auto;
+	margin-bottom: auto;
 }
 
 h3 {
@@ -93,17 +136,12 @@ h3 {
 	padding-left: 15px;
 }
 
-input[type=text], p {
+input[type=text] {
 	display: block;
 	margin: 10px auto;
 	padding: 12px 20px;
 }
 
-#addLoc {
-	font-weight: 400;
-	color: white;
-	padding-left: 15px;
-}
 
 hr {
 	width: 80%;
@@ -115,11 +153,48 @@ hr {
 	margin-left: 10%;
 }
 
-#paveIt {
-	display:block;
-	
-	margin: 10px auto;
-	padding: 12px 20px;
-	background-color: color: #828282;
+#paveIt{
+	display: block;
+	margin: auto;
+}
 
+
+#ddText {
+	padding-left: 10%;
+	padding-right: 10%;
+	line-height: 45px;
+	font-size: 160%;
+	font-weight: 300;
+}
+
+
+#showFood {
+	position: fixed;
+	z-index: 2000;
+	display: block;
+	background: #3a3a3a;
+	padding: 8px;
+	right: 3%;
+	bottom: 5%;
+	width:50px;
+	height:50px;
+}
+
+#showTour {
+	position: fixed;
+	z-index: 2000;
+	display: block;
+	background: #3a3a3a;
+	padding: 8px;
+	right: 10%;
+	bottom: 5%;
+	width:50px;
+	height:50px;
+}
+
+
+
+.ehPadding {
+	padding-left: 4px;
+	padding-top: 4px;
 }
