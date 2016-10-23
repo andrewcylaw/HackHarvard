@@ -14,29 +14,53 @@
     		way<span style="font-weight:bold">paver</span>
     	</header>
 
-        <div id="openSideNav" onclick="pave.openNav()"> <img class="svgNav" src="icon_menu_white.svg" width="40"> </div>
+        <div id="openSideNav" onclick="pave.openNav()"> <img src="icon_menu_white.svg" width="40"> </div>
 
     	<div id="mySidenav" class="sidenav"> 
             <a href="javascript:void(0)" class="closebtn" onclick="pave.closeNav()">&times;</a>
 
-            <h3><img class="svgNav" src="icon_place_white.svg" width="18"> Start</h3>
+            <h3><img src="icon_place_white.svg" width="18"> Start</h3>
             <input type="text" id="startAddress" placeholder="address" name="startAddress"></input>
             <img class="downArrow" src="icon_darrow_white.svg"></img>
             <p id="addLoc"> </p>
             
-            <h3><img class="svgNav" src="icon_place_white.svg" width="18"> Destination</h3>
+            <h3><img src="icon_place_white.svg" width="18"> Destination</h3>
             <input type="text" id="endAddress"  placeholder="address" name="endAddress"></input>
 
             <br>
             <hr>
             <br>
 
-            <h3><img class="svgNav" src="icon_radius_white.svg" width="18"> Radius</h3>
+            <h3><img src="icon_radius_white.svg" width="18"> Radius</h3>
             <input type="text" id="radius"  pattern="[0-9]*" placeholder="distance in m"></input>
 
-            <input type="submit" id="paveIt" value="pave it" onclick="pave.enterPrefs()"></input>
+            <img src="icon_paveit_white.svg" width="40" onClick="pave.enterPrefs()" id="paveIt">
+            <p>pave it</p>
+            
+  		</div>
 
-  		 </div>
+
+
+        <div onclick="pave.openHelp()"> <img id="openHelpNav" src="icon_info_white.svg" width="40"> </div>
+
+
+            <div id="helpDropDown" class="helpDropDown">
+                <a href="javascript:void(0)" id="helpDropDown" class="closebtnDD" onclick="pave.closeHelp()">
+                    <img id="closeHelpNav" src="icon_done_white.svg" width="40">
+                </a>
+
+            <p id="ddText">
+                A simple solution for sightseeing along a path. 
+                <br>
+                Enter any two locations and get nearby specialties.
+                <br>
+                Click on location markers to dynamically add them to your roadtrip.
+            </p>
+             </div>
+
+        </div>
+
+
 
 
     	<div id="map"></div>

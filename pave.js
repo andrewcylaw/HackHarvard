@@ -31,6 +31,20 @@ pave.closeNav = function() {
     document.getElementById("mySidenav").style.width = "0";
 }
 
+pave.openHelp = function(){
+	document.getElementById("helpDropDown").style.height = "240px";
+	document.getElementById("helpDropDown").style.width = "100%";
+	document.getElementById("closeHelpNav").style.height = "320px";
+	//document.getElementById("closeHelpNav").style.width = "40";
+}
+
+pave.closeHelp = function(){	
+	document.getElementById("helpDropDown").style.width = "0";
+	document.getElementById("helpDropDown").style.height = "0px";
+    document.getElementById("closeHelpNav").style.height = "0px";
+	//document.getElementById("closeHelpNav").style.width = "0";
+}
+
 // Submit form
 pave.enterPrefs = function(){
 	pave.startAddress = document.getElementById("startAddress").value;
@@ -38,6 +52,7 @@ pave.enterPrefs = function(){
 	pave.radius = document.getElementById("radius").value;
 
 	calculateAndDisplayRoute();
+
 }
 
 // insert this waypoint between start and end points
@@ -50,10 +65,11 @@ pave.addWaypoint = function(place){
 	var tmpDown = document.createElement("img");
 
 	// create icon
-	tmpImg.src = "icon_add_white.svg"
-	tmpImg.width = "18";
+	tmpImg.src = "icon_add_white.svg";
+	tmpImg.className = "wayPointcl";
+	tmpImg.width = "26";
 
-	tmpDown.src = "icon_darrow_white.svg"
+	tmpDown.src = "icon_darrow_white.svg";
 	tmpDown.className = "downArrow";
 
 	// add image + name of event
