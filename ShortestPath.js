@@ -1,13 +1,16 @@
 var map;
-var directionsDisplay;
-var directionsService;
-var stepDisplay;
+//var stepDisplay;
 var markers = [];
-var myRoute;
-var map;
+var renderers = [];
 var points = [];
 var wayPoints = [];
 var wayPointsNames = [];
+var directionsService;
+var directionsDisplay;
+//var directionsRenderer;
+var stepDisplay;
+var prevMapsCount = 0;
+var newRound = false;
 
 // Create a map and center it on Manhattan.
 function initMap() {
@@ -15,25 +18,24 @@ function initMap() {
     zoom: 13,
     center: {lat: 42.3736158, lng: -71.1097335}
   });
-
-}
-
-// Adds a marker to the map and push to the array.
-function addMarker(location) {
-  var marker = new google.maps.Marker({
-    position: location,
-    map: map
-  });
-  markers.push(marker);
+    // Instantiate a directions service.
+  //directionsService = new google.maps.DirectionsService;
+  // Create a renderer for directions and bind it to the map.
+  //directionsDisplay = new google.maps.DirectionsRenderer({map: map});
+  // Instantiate an info window to hold step text.
+  //stepDisplay = new google.maps.InfoWindow;
+  // loop over all waypoints
+  //map = new google.maps.Map(document.getElementById('map'));
 }
 
 
 // Removes the markers from the map, but keeps them in the array.
 function deleteMarkers() {
   for (var i = 0; i < markers.length; i++) {
-    markers[i].setMap(null);
+    if (wayPoints.indexOf(markers[i]) == -1) {
+      markers[i].splice(i, 1);
+    }
   }
-  markers = [];
 }
 
 //calculates distance between two points in km's
@@ -48,6 +50,7 @@ function displayNearRoutePlaces(tmpRoute) {
 
   // assume there is only one route, find all path points.
   var route = tmpRoute;
+  var path = route.overview_path;
   var pathPoints = new Array();
   var legs = route.legs;
   for (i = 0; i < legs.length; i++) {
@@ -64,20 +67,18 @@ function displayNearRoutePlaces(tmpRoute) {
   // for every 70 points, request to find all places to visit within 500 range given location
   var p1 = pathPoints[0];
   var p2;
-  for (var i =1; i < pathPoints.length; i++) {
+  for (var i =0; i < pathPoints.length; i++) {
     p2 = pathPoints[i];
     if (calcDistance(p1, p2) > 0.7) {
-      var xy = p2;
+      var xy = pathPoints[i];
       //contentString += '<br>' + 'Coordinate ' + i + ':<br>' + xy.lat() + ',' + xy.lng();
       var point = new google.maps.LatLng(xy.lat(), xy.lng());
       //console.log(xy.lat() + ", " + xy.lng());
       var request = {
         location: point,
         radius: pave.radius,
-        keyword: 'tourist attraction',
+        keyword: pave.srchCond
         //openNow: true
-        keyword: pave.srchCond,
-        openNow: true
       };
       service = new google.maps.places.PlacesService(map);
       service.nearbySearch(request, callback);
@@ -99,12 +100,14 @@ function setUp() {
     if (status == google.maps.GeocoderStatus.OK) {
       var origPoint = new google.maps.LatLng(results[0].geometry.location.latitude, results[0].geometry.location.longitude);
       updateWayPoints(origPoint, pave.startAddress);
+      updateMap();
     }
   });
   geocoder.geocode( { 'address': pave.endAddress}, function(results, status) {
     if (status == google.maps.GeocoderStatus.OK) {
       var destPoint = new google.maps.LatLng(results[0].geometry.location.latitude, results[0].geometry.location.longitude);
       updateWayPoints(destPoint, pave.endAddress);
+      updateMap();
     }
   });
 }
@@ -123,42 +126,59 @@ function callback(results, status) {
 }
 
 function createMarker(place) {
-  if (points.indexOf(place) == -1) {
-    var placeLoc = place.geometry.location;
-    var photos = place.photos;
-    if (!photos) {
-        return;
+  for (var i = 0; i < markers.length; i++) {
+    if (place.geometry.location.lat() == markers[i].position.lat() && place.geometry.location.lng() == markers[i].position.lng()) {
+      return;
     }
-    var marker = new google.maps.Marker({
-      map: map,
-      position: place.geometry.location,
-      title: place.name,
-      icon: photos[0].getUrl({'maxWidth': 35, 'maxHeight': 35}),
-    });
-    markers.push(marker);
+  };
+  var placeLoc = place.geometry.location;
+  var photos = place.photos;
+  if (!photos) {
+      return;
+  }
+  var marker = new google.maps.Marker({
+    map: map,
+    position: place.geometry.location,
+    title: place.name + ", MA",
+    icon: photos[0].getUrl({'maxWidth': 35, 'maxHeight': 35}),
+  });
 
+  marker.addListener('mouseover', function() {
+    infowindow.setContent(this.title);
+    infowindow.open(map, this);
+  });
 
-    marker.addListener('mouseover', function() {
-      infowindow.setContent(this.title);
-      infowindow.open(map, this);
-    });
+  marker.addListener('mouseout', function() {
+    infowindow.close();
+  });
 
-    marker.addListener('mouseout', function() {
-      infowindow.close();
-    });
-
-    var infowindow = new google.maps.InfoWindow();
-    google.maps.event.addListener(marker, 'click', function() {
-      infowindow.setContent(place.name);
-      infowindow.open(map, this);
+  var infowindow = new google.maps.InfoWindow();
+  google.maps.event.addListener(marker, 'click', function() {
+    infowindow.setContent(place.name);
+    infowindow.open(map, this);
+    var wp = new google.maps.LatLng(this.position.lat(), this.position.lng());
+    // if waypoints not listed, list it and update waypoints maps
+    var index = -1;
+    for (var i = 0; i < wayPoints.length; i++) {
+      if (wp.lat() == wayPoints[i].lat() && wp.lng() == wayPoints[i].lng()) {
+        index = i;
+        break;
+      }
+    };
+    if (index == -1) {
       // creates waypoint display on the left panel
       pave.addWaypoint(place.name);
-      console.log(placeloc);
-      updateWayPoints(new google.maps.LatLng(place.geometry.location.lat(), place.geometry.location.lng()));
-    });
-    points.push(place);
-    //console.log(place);
-  }
+      //console.log(this);
+      updateWayPoints(wp, this.title);
+    // else remove the waypoint and then update
+    } else {
+      wayPoints.splice(index, 1);
+      wayPointsNames.splice(index, 1);
+    }
+    updateMap();
+  });
+  markers.push(marker);
+  //console.log(place);
 }
 
 /*
@@ -180,8 +200,10 @@ Array.prototype.insert = function (index, item) {
   this.splice(index, 0, item);
 };
 
+
 function updateWayPoints(wayPoint, name) {
   if (wayPoints.length < 2) {
+    //deleteMarkers();
     wayPoints.push(wayPoint);
     wayPointsNames.push(name);
     if (wayPoints.length == 1) {
@@ -191,7 +213,6 @@ function updateWayPoints(wayPoint, name) {
     wayPoints.insert(1, wayPoint);
     wayPointsNames.insert(1, name);
   } else {
-    deleteMarkers();
     for(var i=1; i < wayPoints.length; i++) {
       var prevD = calcDistance(wayPoints[0], wayPoints[i]);
       var newD = calcDistance(wayPoints[0], wayPoint);
@@ -202,41 +223,60 @@ function updateWayPoints(wayPoint, name) {
       }
     }
   }
+}
+
+function updateMap() {
+  for (var i = 0; i < wayPoints.length; i++) {
+    console.log(calcDistance(wayPoints[0], wayPoints[i]));
+  };
   console.log(wayPointsNames);
 
   for (var i = 0; i < wayPoints.length - 1; i++) {
+    if (i == 0) {
+      for (var j = 0; j < prevMapsCount; j++) {
+        if (renderers.length > 0) {
+          renderers[0].setMap(null);
+          renderers.splice(0, 1);
+        }
+      };
+      // reset markers too.
+      for (var m = 0; m < markers.length; m++) {
+        markers[m].setMap(null);
+      }
+      markers = [];
+      prevMapsCount = 0;
+    }
     calculateAndDisplayRoute(wayPointsNames[i], wayPointsNames[i+1]);
+    prevMapsCount++;
   };
 }
 
 // direction service functions from here.
 function calculateAndDisplayRoute(p1, p2) {
-  //var markerArray = [];
 
-// loop over all waypoints
-  map = new google.maps.Map(document.getElementById('map'));
-
-
-  // Instantiate a directions service.
-  var directionsService = new google.maps.DirectionsService;
-
-  // Create a renderer for directions and bind it to the map.
-  var directionsDisplay = new google.maps.DirectionsRenderer({map: map});
-
-  // Instantiate an info window to hold step text.
-  var stepDisplay = new google.maps.InfoWindow;
-  /*
-  // First, remove any existing markers from the map.
-  for (var i = 0; i < markerArray.length; i++) {
-    markerArray[i].setMap(null);
+  function renderDirections(result) {
+    var directionsRenderer = new google.maps.DirectionsRenderer;
+    directionsRenderer.setMap(map);
+    directionsRenderer.setDirections(result);
+    renderers.push(directionsRenderer);
+    var myRoutes = directionsRenderer.directions.routes;
+    // display all nearby places.
+    displayNearRoutePlaces(myRoutes[0]);
   }
-  */
 
-  // Retrieve the start and end locations and create a DirectionsRequest using
-  //console.log("startAdd: " + pave.origin);
-  //console.log("endAdd:   " + pave.destination);
-  //console.log("radius:   " + pave.radius);
+  var directionsService = new google.maps.DirectionsService;
+  function requestDirections(start, end) {
+    directionsService.route({
+      origin: start,
+      destination: end,
+      travelMode: google.maps.DirectionsTravelMode.DRIVING
+    }, function(result) {
+      renderDirections(result);
+    });
+  }
+  requestDirections(p1, p2);
 
+  /*
   directionsService.route({
     origin: p1,
     destination: p2,
@@ -255,11 +295,13 @@ function calculateAndDisplayRoute(p1, p2) {
       window.alert('Directions request failed due to ' + status);
     }
   });
+  */
 }
 
+/*
 function showSteps(directionResult, markerArray, stepDisplay, map) {
   // For each step, place a marker, and add the text to the marker's infowindow.
-  // Also attach the marker to an array showSteps we can keep track of it and remove it
+  // Also attach the marker to an array so we can keep track of it and remove it
   // when calculating new routes.
   var myRoute = directionResult.routes[0].legs[0];
   for (var i = 0; i < myRoute.steps.length; i++) {
@@ -279,3 +321,4 @@ function attachInstructionText(stepDisplay, marker, text, map) {
     stepDisplay.open(map, marker);
   });
 }
+*/
