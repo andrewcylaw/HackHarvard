@@ -53,7 +53,7 @@ function displayNearRoutePlaces(tmpRoute) {
       var request = {
         location: point,
         radius: pave.radius,
-        keyword: 'tourist attraction',
+        keyword: pave.srchCond,
         openNow: true
       };
       service = new google.maps.places.PlacesService(map);
@@ -177,7 +177,7 @@ function calculateAndDisplayRoute() {
 
 function showSteps(directionResult, markerArray, stepDisplay, map) {
   // For each step, place a marker, and add the text to the marker's infowindow.
-  // Also attach the marker to an array so we can keep track of it and remove it
+  // Also attach the marker to an array showSteps we can keep track of it and remove it
   // when calculating new routes.
   var myRoute = directionResult.routes[0].legs[0];
   for (var i = 0; i < myRoute.steps.length; i++) {

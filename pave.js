@@ -8,6 +8,10 @@ var pave = pave || {};
 pave.startAddress = "";
 pave.endAddress = "";
 pave.radius = "";
+pave.srchCond = "tourist attraction";
+
+// search type
+pave.flip = 0;
 
 // Embed a google map widget into the website
 pave.initMap = function() {
@@ -20,6 +24,21 @@ pave.initMap = function() {
 	  position: uluru,
 	  map: map
 	});
+}
+
+pave.dispType = function(num){
+	pave.flip = num;
+ 
+ 	// food
+	if(num == 0) {
+		document.getElementById("showTour").style.background = "#3a3a3a";
+		document.getElementById("showFood").style.background = "#616161";
+		pave.srchCond = "tourist attraction";
+	} else {
+		document.getElementById("showFood").style.background = "#3a3a3a";
+		document.getElementById("showTour").style.background = "#616161";
+		pave.srchCond = "good restaurants";
+	}
 }
 
 // Manipulate sidenav bar
