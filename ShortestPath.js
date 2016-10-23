@@ -74,13 +74,10 @@ function displayNearRoutePlaces(tmpRoute) {
       var request = {
         location: point,
         radius: pave.radius,
-<<<<<<< HEAD
         keyword: 'tourist attraction',
         //openNow: true
-=======
         keyword: pave.srchCond,
         openNow: true
->>>>>>> andrewIntermediate
       };
       service = new google.maps.places.PlacesService(map);
       service.nearbySearch(request, callback);

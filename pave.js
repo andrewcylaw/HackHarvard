@@ -70,13 +70,9 @@ pave.enterPrefs = function(){
 	pave.endAddress = document.getElementById("endAddress").value;
 	pave.radius = document.getElementById("radius").value;
 
-<<<<<<< HEAD
+
 	//calculateAndDisplayRoute();
 	setUp();
-=======
-	calculateAndDisplayRoute();
-
->>>>>>> andrewIntermediate
 }
 
 // insert this waypoint between start and end points
