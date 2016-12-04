@@ -1,5 +1,5 @@
 # HackHarvard - waypaver
-waypaver was developed over the weekend of 22 Oct 2016 - 23 Oct 2016 for the 2016 HackHarvard competition. This was developed by Andrew Law, Hongman Cho, and Yushan Lin. For the time being, you can visit our presented product at http://waypavernet.domain.com/
+waypaver was developed over the weekend of 22 Oct 2016 - 23 Oct 2016 for the 2016 HackHarvard competition. For the time being, you can visit our presented product at http://waypavernet.domain.com/
 
 
 **About**
